@@ -4,7 +4,11 @@ const Schema = mongoose.Schema; // Create a shortcut to mongoose.Schema
 
 const reviewSchema = new Schema({
     body: String,
-    rating: Number
+    rating: Number,
+    author :{
+        type: Schema.Types.ObjectId,
+        ref: 'User' // Reference to the User model
+    }
 });
 
 

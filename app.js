@@ -12,12 +12,15 @@ const {campgroundSchema , reviewSchema} = require('./schemas.js') // Import the 
 
 const Review = require('./models/review') //importing the Review model
 
-const campgrounds = require('./routes/campgrounds') //importing the campgrounds router
-const reviews = require('./routes/reviews') //importing the reviews router
+const userRoutes = require('./routes/user') // Import the User model
+const campgroundRoutes = require('./routes/campgrounds') //importing the campgrounds router
+const reviewRoutes = require('./routes/reviews') //importing the reviews router
+
 
 const passport = require('passport') // Import the passport module
 const LocalStrategy = require('passport-local') // Import the LocalStrategy module from passport-local  
 const User = require('./models/user') // Import the User model
+
 
 
 main().catch(err => console.log(err));
@@ -74,15 +77,17 @@ passport.serializeUser(User.serializeUser()) // This is a method that serializes
 passport.deserializeUser(User.deserializeUser()) // This is a method that deserializes the user object from the session. It is used to retrieve the user object from the database using the user ID stored in the session.
 
 app.use((req, res, next) => { // This is a middleware function that sets the flash messages in the response locals
+    res.locals.currentUser = req.user //
     res.locals.success = req.flash('success') // This sets the success flash message in the response locals
     res.locals.error = req.flash('error') // This sets the error flash message in the response locals
     next() // Call the next middleware function in the stack
 })
 
-/
 
-app.use('/campgrounds', campgrounds) // Use the campgrounds router for all routes that start with /campgrounds
-app.use('/campgrounds/:id/reviews', reviews) // Use the reviews router for all routes that start with /campgrounds/:id/reviews
+app.use('/', userRoutes) // Use the user router for all routes that start with /user
+app.use('/campgrounds', campgroundRoutes) // Use the campgrounds router for all routes that start with /campgrounds
+app.use('/campgrounds/:id/reviews', reviewRoutes) // Use the reviews router for all routes that start with /campgrounds/:id/reviews
+
 
 
 app.use(express.static(path.join(__dirname, 'public'))) //This tells Express to serve the files in the public directory as static assets. This allows us to include CSS and JavaScript files in our templates.
